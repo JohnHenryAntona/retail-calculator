@@ -29,4 +29,3 @@ export function getTaxRateString(region: string): string {
   const rate = getTaxRate(region)
   return rate > 0 ? `${rate * 100}%` : '0%'
 }
-
