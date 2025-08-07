@@ -19,3 +19,14 @@ export function getTaxRate(region: string): number {
 
   return regionTaxMap[code] ?? 0
 }
+/**
+ * Returns the regional tax rate as a percentage string based on 3-letter region code.
+ *
+ * @param region - 3-letter region code (case-insensitive)
+ * @returns Tax rate as a percentage string (e.g., "8%")
+ */
+export function getTaxRateString(region: string): string {
+  const rate = getTaxRate(region)
+  return rate > 0 ? `${rate * 100}%` : '0%'
+}
+
