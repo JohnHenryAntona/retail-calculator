@@ -51,15 +51,22 @@ export function CalculatorForm() {
     setResult(breakdown)
   }
 
+  interface FormatCurrency {
+    (value: number): string
+  }
+
+  const formatCurrency: FormatCurrency = function (value: number): string {
+    return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  }
+
   return (
     <>
       <form
-        className="w-full max-w-md mx-auto space-y-6 bg-white p-6 rounded shadow"
         onSubmit={handleSubmit}
+        className="w-full max-w-md mx-auto bg-white p-6 rounded-xl shadow space-y-6"
       >
-        {/* Quantity */}
         <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="quantity">
+          <label htmlFor="quantity" className="block text-sm font-semibold mb-1 text-gray-700">
             Quantity
           </label>
           <input
@@ -67,15 +74,14 @@ export function CalculatorForm() {
             type="number"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
+            className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter number of items"
           />
-          {errors.quantity && <p className="text-red-500 text-sm">{errors.quantity}</p>}
+          {errors.quantity && <p className="text-red-500 text-sm mt-1">{errors.quantity}</p>}
         </div>
 
-        {/* Price */}
         <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="price">
+          <label htmlFor="price" className="block text-sm font-semibold mb-1 text-gray-700">
             Price per Item
           </label>
           <input
@@ -83,15 +89,14 @@ export function CalculatorForm() {
             type="number"
             value={pricePerItem}
             onChange={(e) => setPricePerItem(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
+            className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter price per item"
           />
-          {errors.price && <p className="text-red-500 text-sm">{errors.price}</p>}
+          {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
         </div>
 
-        {/* Region */}
         <div>
-          <label className="block text-sm font-medium mb-1" htmlFor="region">
+          <label htmlFor="region" className="block text-sm font-semibold mb-1 text-gray-700">
             Region Code
           </label>
           <input
@@ -99,16 +104,16 @@ export function CalculatorForm() {
             type="text"
             value={region}
             onChange={(e) => setRegion(e.target.value)}
-            className="w-full border px-3 py-2 rounded uppercase"
+            className="w-full border border-gray-300 px-3 py-2 rounded-md uppercase focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="e.g. AUK"
             maxLength={3}
           />
-          {errors.region && <p className="text-red-500 text-sm">{errors.region}</p>}
+          {errors.region && <p className="text-red-500 text-sm mt-1">{errors.region}</p>}
         </div>
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition"
+          className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition"
         >
           Calculate
         </button>
@@ -116,16 +121,30 @@ export function CalculatorForm() {
 
       {/* Show result */}
       {result && (
-        <div className="max-w-md mx-auto mt-8 p-4 bg-gray-100 rounded shadow">
-          <h2 className="text-lg font-semibold mb-2">Calculation Result</h2>
-          <ul className="space-y-1 text-sm">
-            <li>Total: ${result.total.toFixed(2)}</li>
-            <li>Discount Rate: {(result.discountRate * 100).toFixed(0)}%</li>
-            <li>Discount Amount: ${result.discountAmount.toFixed(2)}</li>
-            <li>Discounted Total: ${result.discountedTotal.toFixed(2)}</li>
-            <li>Tax Rate: {(result.taxRate * 100).toFixed(2)}%</li>
-            <li>Tax Amount: ${result.taxAmount.toFixed(2)}</li>
-            <li className="font-bold">Final Total: ${result.finalTotal.toFixed(2)}</li>
+        <div className="max-w-md mx-auto mt-8 bg-blue-50 border border-blue-200 p-5 rounded-lg shadow-sm">
+          <h2 className="text-lg font-semibold mb-4 text-blue-800">Calculation Summary</h2>
+          <ul className="space-y-1 text-sm text-gray-800">
+            <li>
+              <strong>Total:</strong> ${formatCurrency(result.total)}
+            </li>
+            <li>
+              <strong>Discount Rate:</strong> {(result.discountRate * 100).toFixed(0)}%
+            </li>
+            <li>
+              <strong>Discount Amount:</strong> ${formatCurrency(result.discountAmount)}
+            </li>
+            <li>
+              <strong>Discounted Total:</strong> ${formatCurrency(result.discountedTotal)}
+            </li>
+            <li>
+              <strong>Tax Rate:</strong> {(result.taxRate * 100).toFixed(2)}%
+            </li>
+            <li>
+              <strong>Tax Amount:</strong> ${formatCurrency(result.taxAmount)}
+            </li>
+            <li className="font-bold">
+              <strong>Final Total:</strong> ${formatCurrency(result.finalTotal)}
+            </li>
           </ul>
         </div>
       )}

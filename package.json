@@ -8,6 +8,7 @@
     "@types/node": "^16.18.126",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
+    "jiti": "^2.5.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-scripts": "5.0.1",
@@ -23,7 +24,8 @@
     "format": "prettier --write 'src/**/*.{ts,tsx,js,jsx,json,css,md}'",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "preinstall": "npx npm-force-resolutions"
   },
   "eslintConfig": {
     "extends": [
@@ -51,13 +53,19 @@
     "@typescript-eslint/parser": "^8.39.0",
     "@vitest/ui": "^3.2.4",
     "ajv": "^8.17.1",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-tailwindcss": "^3.18.2",
     "jsdom": "^26.1.0",
+    "npm-force-resolutions": "^0.0.10",
+    "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "vitest": "^3.2.4"
+  },
+  "resolutions": {
+    "jiti": "1.20.0"
   }
 }
