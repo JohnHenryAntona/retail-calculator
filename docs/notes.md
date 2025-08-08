@@ -195,9 +195,6 @@ Tested:
 ## 8. Opportunities for Extension
 
 - Extract pricing logic into a `usePricingEngine()` hook
-- Store breakdown history in context/localStorage
-- Add currency formatting for different regions
-- Deploy with Vercel or Netlify
 - Add E2E tests with Playwright
 
 ---
