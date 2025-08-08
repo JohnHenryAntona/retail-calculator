@@ -1,46 +1,115 @@
-# Getting Started with Create React App
+# Retail Calculator Foodstaffs Coding Test
+A simple, test-driven retail price calculator built with **React + TypeScript + Tailwind CSS**.  
+It calculates order total, applies a discount based on value, and adds region-specific tax.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+---
 
-## Available Scripts
+## Task Breakdown
+1. Task #1: Initialize React TypeScript project using CRA
+2. Task #2: Setup ESLint and Prettier
+3. Task #3: Create calculateTotal utility function (quantity * price)
+4. Task #4: Create getDiscountRate utility based on total value (use discount from provided specifications)
+5. Task #5: Create getTaxRate utility based on region code (use tax rates from spcifications)
+6. Task #6: Create calculateFinalPrice function (apply discount, tax and returns full breakdown)
+7. Task #7: Add unit tests for calculateTotal
+8. Task #8: Add unit tests for getDiscountRate
+9. Task #9: Add unit tests for getTaxRate
+10. Task #10: Add unit tests for calculateFinalPrice
+11. Task #11: Build input form for item count, price, and region (simple form inputs only)
+12. Task #12: Add basic input validation (positive numbers, 3-letter region) (with inline errors if invalid)
+13. Task #13: Add submit handler to trigger calculation (display calculated output)
+15. Task #14: Add basic CSS styling for layout and form (styled components using Tailwind)
+16. Task #15: Add React Testing Library test for rendering form
+17. Task #16: Add integration test for full price calculation flow (simulate user input and check output)
+18. Task #17: Write README instructions (setup, test, run app)
+19. Task #18: Add notes and decisions taken (slicing, logic, structure)
+20. Task #19: Final clean up, check all PRs are merged to main
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Features
+- Accepts quantity, price per item, and 3-letter region code
+- Calculates:
+  - Total price
+  - Discount (based on total)
+  - Tax (based on region)
+  - Final payable amount
+- Inline input validation with user-friendly error messages
+- Fully unit & integration tested with **Vitest + React Testing Library**
+- Responsive, utility-first styling using **Tailwind CSS**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Stack
 
-### `npm test`
+- Framework
+    - React, TS, create-react-app with --template typescript parameter
+- Styling
+    - Tailwind CSS
+- Testing
+    - Vitest (unit test)
+    - React Testing Lib (UI/integration test)
+    - @testing-library/user-event (simulate real user interactions)
+- Dev tools
+    - ESLint (TS and react linting)
+    - Prettier (formatting)
+- Package Management
+    - npm
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## Setup Instructions
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 1. Clone the repo
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+git clone <your-repo-url>
+cd retail-calculator
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 2. Install dependencies
 
-### `npm run eject`
+```bash
+npm install
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### 3. Run the app locally
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm install
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+---
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Run Tests
 
-## Learn More
+### 1. Run Unit + Integration Tests
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+npm run test
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 2. Lint and Format
+
+```bash
+npm run lint
+npm run lint:fix
+npm run format
+```
+
+## Folder Structure
+
+```bash
+src/
+├── components/          # UI components
+│   └── __tests__/       # Unit & integration tests
+│   └── CalculatorForm.tsx
+├── utils/               # Pure functions for pricing
+│   └── pricing/
+│       ├── __tests__/       # Unit tests
+│       ├── calculateTotal.ts
+│       ├── getDiscountRate.ts
+│       ├── getTaxRate.ts
+│       └── calculateFinalPrice.ts
+└── index.tsx            # App entry point
+```
