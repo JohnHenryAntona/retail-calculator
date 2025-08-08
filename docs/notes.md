@@ -195,8 +195,6 @@ Tested:
 ## 8. Opportunities for Extension
 
 - Extract pricing logic into a `usePricingEngine()` hook
-- Add dropdown/select for regions instead of free text
-- Replace inline validation with Zod or Yup
 - Store breakdown history in context/localStorage
 - Add currency formatting for different regions
 - Deploy with Vercel or Netlify
