@@ -105,8 +105,11 @@ export function calculateTotal(quantity: number, price: number): number
 export function getDiscountRate(total: number): number
 ```
 - Returns percentage:
-    - 5% if total ≥ 10000
-    - 3% if total ≥ 5000
+    - 15% if total ≥ 50000
+    - 10% if total ≥ 10000
+    - 7% if total ≥ 7000
+    - 5% if total ≥ 5000
+    - 3% if total ≥ 1000
     - 0% otherwise
 
 ### 4.3 Tax Rate
@@ -132,9 +135,10 @@ Returns:
   totalBeforeDiscount: number,
   discountRate: number,
   discountAmount: number,
+  discountedTotal: number,
   taxRate: number,
   taxAmount: number,
-  finalPrice: number
+  finalTotal: number
 }
 ```
 
@@ -194,7 +198,7 @@ Tested:
 
 ## 8. Opportunities for Extension
 
-- Extract pricing logic into a `usePricingEngine()` hook
+- Replace inline validation with Zod or Yup
 - Add E2E tests with Playwright
 
 ---

@@ -19,8 +19,8 @@ describe('getTaxRate', () => {
   it('returns 0 for unknown or invalid region codes', () => {
     expect(getTaxRate('')).toBe(0)
     expect(getTaxRate('XYZ')).toBe(0)
-    expect(getTaxRate(undefined as any)).toBe(0)
-    expect(getTaxRate(null as any)).toBe(0)
+    expect(getTaxRate(undefined as unknown as string)).toBe(0)
+    expect(getTaxRate(null as unknown as string)).toBe(0)
     expect(getTaxRate('123')).toBe(0)
   })
 })

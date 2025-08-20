@@ -36,6 +36,6 @@ describe('getDiscountRate', () => {
     expect(getDiscountRate(NaN)).toBe(0)
     expect(getDiscountRate(-100)).toBe(0)
     expect(getDiscountRate(Infinity)).toBe(0)
-    expect(getDiscountRate(undefined as any)).toBe(0)
+    expect(getDiscountRate(undefined as unknown as number)).toBe(0)
   })
 })
