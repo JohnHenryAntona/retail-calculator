@@ -1,29 +1,39 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { z } from 'zod'
 import { calculateFinalPrice, FinalPriceBreakdown } from '../utils/pricing/calculateFinalPrice'
 import { PriceBreakdown } from './PriceBreakdown'
+import { RegionTaxCode } from './RegionTaxCode'
+// import { TextInput } from './TextInput'
+// TODO: Ensure TextInput.tsx exists in the same folder, or update the import path below:
+import { TextInput } from './inputs/TextInput'
+import { SelectInput } from './inputs/SelectInput'
 
 export function CalculatorForm() {
   const [quantity, setQuantity] = useState('')
   const [pricePerItem, setPricePerItem] = useState('')
   const [region, setRegion] = useState('')
   const [result, setResult] = useState<FinalPriceBreakdown | null>(null)
+  const [errors, setErrors] = useState({ quantity: '', price: '', region: '' })
 
-  const [errors, setErrors] = useState({
-    quantity: '',
-    price: '',
-    region: '',
+  // regionTaxMap state
+  const [regionTaxMap, setRegionTaxMap] = useState<Record<string, number>>(() => {
+    const stored = localStorage.getItem('regionTaxMap')
+    if (stored) return JSON.parse(stored)
+    return {
+      AUK: 0.0685,
+      WLG: 0.08,
+      WAI: 0.0625,
+      CHC: 0.04,
+      TAS: 0.0825,
+    }
   })
 
-  // const regionOptions = [
-  //   { code: 'AUK', label: 'Australia (AUK)' },
-  //   { code: 'WLG', label: 'Wellington (WLG)' },
-  //   { code: 'WAI', label: 'Waikato (WAI)' },
-  //   { code: 'CHC', label: 'Christchurch (CHC)' },
-  //   { code: 'TAS', label: 'Tasma (TAS)' },
-  // ]
+  // Save to localStorage whenever regionTaxMap changes
+  useEffect(() => {
+    localStorage.setItem('regionTaxMap', JSON.stringify(regionTaxMap))
+  }, [regionTaxMap])
 
-  const allowedRegions = ['AUK', 'WLG', 'WAI', 'CHC', 'TAS']
+  const allowedRegions = Object.keys(regionTaxMap)
 
   const formSchema = z.object({
     quantity: z.string().refine((val) => /^\d+$/.test(val) && parseInt(val) > 0, {
@@ -34,14 +44,12 @@ export function CalculatorForm() {
     }),
     region: z
       .string()
-      .regex(/^[A-Z]{3}$/, { message: 'Region must be exactly 3 letters.' })
-      // .refine((val) => regionOptions.some((r) => r.code === val), {
+      .regex(/^[A-Z]{3}$/, { message: 'Region must be exactly 3 uppercase letters.' })
       .refine((val) => allowedRegions.includes(val.trim().toUpperCase()), {
-        message: 'Please select a valid region. Region must be one of: AUK, WLG, WAI, CHC, TAS.',
+        message: `Please select a valid region. Region must be one of: ${allowedRegions.join(', ')}.`,
       }),
   })
 
-  // Handle form validation and calculation
   const validate = () => {
     const result = formSchema.safeParse({
       quantity,
@@ -63,7 +71,6 @@ export function CalculatorForm() {
     return true
   }
 
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return
@@ -71,126 +78,69 @@ export function CalculatorForm() {
     const breakdown = calculateFinalPrice(
       Number(quantity),
       Number(pricePerItem),
-      region.trim().toUpperCase()
+      region.trim().toUpperCase(),
+      regionTaxMap
     )
 
     setResult(breakdown)
   }
 
-  interface FormatCurrency {
-    (value: number): string
-  }
-
-  const formatCurrency: FormatCurrency = function (value: number): string {
-    return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  }
+  // Prepare options for SelectInput
+  const regionOptions = [
+    { value: '', label: 'Select region' },
+    ...allowedRegions.map((code) => ({
+      value: code,
+      label: `${code} (${(regionTaxMap[code] * 100).toFixed(2)}%)`,
+    })),
+  ]
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md mx-auto bg-white p-6 rounded-xl shadow space-y-6"
-      >
-        <div>
-          <label htmlFor="quantity" className="block text-sm font-semibold mb-1 text-gray-700">
-            Quantity
-          </label>
-          <input
-            id="quantity"
-            type="number"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-            className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter number of items"
-          />
-          {errors.quantity && <p className="text-red-500 text-sm mt-1">{errors.quantity}</p>}
+      <div className="flex flex-col md:flex-row w-full gap-4">
+        {/* Left column: Region Code Management */}
+        <div className="w-full md:w-1/2">
+          <RegionTaxCode regionTaxMap={regionTaxMap} setRegionTaxMap={setRegionTaxMap} />
         </div>
-
-        <div>
-          <label htmlFor="price" className="block text-sm font-semibold mb-1 text-gray-700">
-            Price per Item
-          </label>
-          <input
-            id="price"
-            type="number"
-            value={pricePerItem}
-            onChange={(e) => setPricePerItem(e.target.value)}
-            className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter price per item"
-          />
-          {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
+        {/* Right column: Retail Calculator Form */}
+        <div className="w-full md:w-1/2">
+          <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow space-y-6 mt-6">
+            <TextInput
+              id="quantity"
+              label="Quantity"
+              type="number"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              placeholder="Enter number of items"
+              error={errors.quantity}
+            />
+            <TextInput
+              id="price"
+              label="Price per Item"
+              type="number"
+              value={pricePerItem}
+              onChange={(e) => setPricePerItem(e.target.value)}
+              placeholder="Enter price per item"
+              error={errors.price}
+            />
+            <SelectInput
+              id="region"
+              label="Region Code"
+              value={region}
+              onChange={(e) => setRegion(e.target.value)}
+              options={regionOptions}
+              error={errors.region}
+            />
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition"
+            >
+              Calculate
+            </button>
+          </form>
+          {/* Show result */}
+          {result && <PriceBreakdown breakdown={result} />}
         </div>
-
-        <div>
-          <label htmlFor="region" className="block text-sm font-semibold mb-1 text-gray-700">
-            Region Code
-          </label>
-          <input
-            id="region"
-            type="text"
-            value={region}
-            onChange={(e) => setRegion(e.target.value)}
-            className="w-full border border-gray-300 px-3 py-2 rounded-md uppercase focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="e.g. AUK, WLG, WAI, CHC or TAS"
-            maxLength={3}
-          />
-          {/* <select
-            id="region"
-            value={region}
-            onChange={(e) => setRegion(e.target.value)}
-            className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Select a region</option>
-            {regionOptions.map((r) => (
-              <option key={r.code} value={r.code}>
-                {r.label}
-              </option>
-            ))}
-          </select> */}
-          {errors.region && <p className="text-red-500 text-sm mt-1">{errors.region}</p>}
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition"
-        >
-          Calculate
-        </button>
-      </form>
-
-      {/* Show result */}
-      {result && (
-        <div className="max-w-md mx-auto mt-8 bg-blue-50 border border-blue-200 p-5 rounded-lg shadow-sm">
-          <h2 className="text-lg font-semibold mb-4 text-blue-800">Calculation Summary</h2>
-          <ul className="space-y-1 text-sm text-gray-800">
-            <li>
-              <strong>Total:</strong> ${formatCurrency(result.total)}
-            </li>
-            <li>
-              <strong>Discount Rate:</strong> {(result.discountRate * 100).toFixed(0)}%
-            </li>
-            <li>
-              <strong>Discount Amount:</strong> ${formatCurrency(result.discountAmount)}
-            </li>
-            <li>
-              <strong>Discounted Total:</strong> ${formatCurrency(result.discountedTotal)}
-            </li>
-            <li>
-              <strong>Tax Rate:</strong> {(result.taxRate * 100).toFixed(2)}%
-            </li>
-            <li>
-              <strong>Tax Amount:</strong> ${formatCurrency(result.taxAmount)}
-            </li>
-            {/* <li>
-              <strong>Final Price Per Item:</strong> ${formatCurrency(result.finalTotal / Number(quantity))}
-            </li> */}
-            <li className="font-bold">
-              <strong>Final Total:</strong> ${formatCurrency(result.finalTotal)}
-            </li>
-          </ul>
-        </div>
-      )}
-      {/* {result && <PriceBreakdown breakdown={result} />} */}
+      </div>
     </>
   )
 }

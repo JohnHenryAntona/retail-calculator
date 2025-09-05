@@ -34,18 +34,20 @@ export interface FinalPriceBreakdown {
  * @param quantity - Number of items purchased
  * @param pricePerItem - Price per individual item
  * @param region - 3-letter region code (case-insensitive)
+ * @param regionTaxMap - A record mapping region codes to tax rates
  * @returns FinalPriceBreakdown object containing all calculated values
  */
 export function calculateFinalPrice(
   quantity: number,
   pricePerItem: number,
-  region: string
+  region: string,
+  regionTaxMap: Record<string, number>
 ): FinalPriceBreakdown {
   const total = calculateTotal(quantity, pricePerItem)
   const discountRate = getDiscountRate(total)
   const discountAmount = total * discountRate
   const discountedTotal = total - discountAmount
-  const taxRate = getTaxRate(region)
+  const taxRate = getTaxRate(region, regionTaxMap)
   const taxAmount = discountedTotal * taxRate
   const finalTotal = discountedTotal + taxAmount
 
@@ -67,13 +69,15 @@ export function calculateFinalPrice(
  * @param quantity - Number of items purchased
  * @param pricePerItem - Price per individual item
  * @param region - 3-letter region code (case-insensitive)
+ * @param regionTaxMap - A record mapping region codes to tax rates
  * @returns Final total price after discounts and taxes
  */
 export function calculateFinalPriceValue(
   quantity: number,
   pricePerItem: number,
-  region: string
+  region: string,
+  regionTaxMap: Record<string, number>
 ): number {
-  const breakdown = calculateFinalPrice(quantity, pricePerItem, region)
+  const breakdown = calculateFinalPrice(quantity, pricePerItem, region, regionTaxMap)
   return breakdown.finalTotal
 }

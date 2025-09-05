@@ -1,16 +1,16 @@
 type Breakdown = {
-  total: number;
-  discountRate: number;
-  discountAmount: number;
-  discountedTotal: number;
-  taxRate: number;
-  taxAmount: number;
-  finalTotal: number;
-};
+  total: number
+  discountRate: number
+  discountAmount: number
+  discountedTotal: number
+  taxRate: number
+  taxAmount: number
+  finalTotal: number
+}
 
 interface FormatCurrency {
-    (value: number): string
-  }
+  (value: number): string
+}
 
 const formatCurrency: FormatCurrency = function (value: number): string {
   return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
